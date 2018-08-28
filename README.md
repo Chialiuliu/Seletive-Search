@@ -1,23 +1,26 @@
-# Seletive-Search
-- [more detail](http://www.huppelen.nl/publications/selectiveSearchDraft.pdf)
+# Selective-Search
+- This approach is used to get region proposals in **Fast-RCNN**.
+- [for more detail](http://www.huppelen.nl/publications/selectiveSearchDraft.pdf)
 # Setup
 - Windows 10
-- Python 3.4
+- Python 3.6
 
 # Result
 <img src="./result/result.jpg" width="700px/">
 
 # Detail
 
-1. Selective Search uses graph-based image segmentation to get initial regions, first.  
+**1.** Selective Search uses graph-based image segmentation to get initial regions, first.  
    In my practice, I just use the function of graph-based image segmentation in openCV.
 
-2. Calculate similarities between each neighboring region.  
-   A. **_color similarity_:**
-       In order to measure the similarity in color, this approach can measure color distribution
-       of each region.
-       calculate color histogram of each region, than calculate the sum of minimize
-       similarity in each interval between both neighboring regions.
+**2.** Calculate similarities between each neighboring region.  
+   **Following are 4 similarity approaches in this paper.**  
+   
+   **A. _color similarity_:**  
+       In order to measure the similarity in color, this approach can measure color distribution  
+       of each region.  
+       calculate color histogram of each region, than calculate the sum of minimize similarity  
+       in each interval between both neighboring regions.  
 
 <img src="./algorithm/color.jpg" width="500px/">  
 
@@ -26,7 +29,7 @@
 
 <img src="./algorithm/merge.jpg" width="500px/">  
 
-   B. **_texture similarity_:**
+   **B. _texture similarity_:**  
        Similar objects have more similar texture features, so we measure the texture similarities  
        between each neighboring region to merge complete object.  
        In this paper, they use SIFT to get image textures.  
@@ -34,14 +37,17 @@
 
 <img src="./algorithm/texture.jpg" width="500px/">  
 
-   C. **_size similarity_:**
-       To avoid all regions be merged by a big region.
+   **C. _size similarity_:**  
+       To avoid all regions be merged by a big region.  
 <img src="./algorithm/size.jpg" width="500px/">  
 
-   D. **_fill similarity_:**
-       Merge the regions which have the least **_hole_** after merging.
-<img src="./algorithm/fill_compare.jpg" width="500px/">  
+   **D. _fill similarity_:**  
+       Merge the regions which have the least **_hole_** after merging.  
 <img src="./algorithm/fill.jpg" width="500px/">  
-3.
+
+   Following are two bounding boxes with same widths and heights, show what is the least **_hole_**.  
+<img src="./algorithm/fill_compare.jpg" width="700px/">  
+
+**3.** Merge the highest similarity of two regions, iteratively.  
 
 ```
