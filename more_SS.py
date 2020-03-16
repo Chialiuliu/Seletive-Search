@@ -78,11 +78,11 @@ def LBP(img):
 
 def calcu_hist(region, BINS, bound=(0,255)):
 	"""
-		if in color hist
+		if in color histogram
 
 		each channel get 25 bins
 
-		for a RGB 3channels  image, the return histogram will be 25*3 = 75 bins
+		for a RGB 3channels image, the return histogram will be 25 * 3 = 75 bins
 	"""
 	hist = np.array([])
 	
@@ -126,27 +126,27 @@ def texture_similar(A, B):
 	return (sum(np.minimum(A["hist_texture"],B["hist_texture"])))
 
 def size_similar(A, B, imageArea):
-	return 1.0- ((A['size']+ B['size'])/ imageArea)
+	return 1.0- ((A['size'] + B['size']) / imageArea)
 
 def fill_similar(A, B, imageArea):
 	"""
 		mergeBBoxArea is the bounding box of A merge B
 
-		it is the bbsize in the paper
+		it is the size(BB) in the paper
 	"""
 
-	w = max(A['bbox'][2], B['bbox'][2])- min(A['bbox'][0], B['bbox'][0])
-	h = max(A['bbox'][3], B['bbox'][3])- min(A['bbox'][1], B['bbox'][1])
+	w = max(A['bbox'][2], B['bbox'][2]) - min(A['bbox'][0], B['bbox'][0])
+	h = max(A['bbox'][3], B['bbox'][3]) - min(A['bbox'][1], B['bbox'][1])
 	mergeBBoxArea = w*h
-	return 1.0- ((mergeBBoxArea- A['size']- B['size'])/ imageArea)
+	return 1.0 - ((mergeBBoxArea - A['size'] - B['size']) / imageArea)
 
 def region_merge(A, B, pos):
-	mergeSize = A['size']+ B['size']
+	mergeSize = A['size'] + B['size']
 	mergeRegion = {
 		'bbox': [min(A['bbox'][0], B['bbox'][0]), min(A['bbox'][1], B['bbox'][1]),
 				max(A['bbox'][2], B['bbox'][2]), max(A['bbox'][3], B['bbox'][3]), pos],
-		'hist_color': (A['hist_color']*A['size']+ B['hist_color']*B['size'])/ mergeSize,
-		'hist_texture': (A['hist_texture']*A['size']+ B['hist_texture']*B['size'])/ mergeSize,
+		'hist_color': (A['hist_color'] * A['size'] + B['hist_color'] * B['size']) / mergeSize,
+		'hist_texture': (A['hist_texture']  *A['size'] + B['hist_texture'] * B['size']) / mergeSize,
 		'size': mergeSize
 	}
 	return mergeRegion
@@ -160,11 +160,11 @@ def selective_search(img, sigma= 0.01, k_cluster= 300, min_area= 5000):
 	neighborHood = neighbor_calcu(region)
 	# Step 4- calculate initial similarity
 	regionSimilar = {}
-	imgArea = img.shape[0]*img.shape[1]
+	imgArea = img.shape[0] * img.shape[1]
 	#print('REGION:{}'.format(list(region.items())[1][0]))
 	for regionA, regionB in neighborHood:
 		regionSimilar[(regionA, regionB)] = similarity_calcu(region[regionA],
-																	region[regionB], imgArea)
+			region[regionB], imgArea)
 
 	# Step 5- select the highest similarity regions and merge the 2 regions, until array is empty
 	while regionSimilar!= {}:
@@ -185,7 +185,7 @@ def selective_search(img, sigma= 0.01, k_cluster= 300, min_area= 5000):
 		for pair in [regionWithoutAB for regionWithoutAB in similarDelete if regionWithoutAB!= (regionA, regionB)]:
 			otherRegion = pair[0] if pair[1] in (regionA, regionB) else pair[1]
 			regionSimilar[(newRegionPos, otherRegion)] = similarity_calcu(region[newRegionPos],
-																				region[otherRegion], imgArea)
+				region[otherRegion], imgArea)
 	# Step 6- sort out region
 	resultRegion = {}
 	for regionPos, data in list(region.items()):
@@ -197,13 +197,15 @@ def selective_search(img, sigma= 0.01, k_cluster= 300, min_area= 5000):
 				'regionSize': data['size'],
 				'regionNum': data['bbox'][4]
 		}
+
 	return resultRegion
 
-def rect_draw(img, region, color=(0, 0, 255), regionSize= 2000):
+def rect_draw(img, region, color = (0, 0, 255), regionSize = 2000):
 	for num, rect in list(region.items()):
-		if rect['regionSize']< regionSize:
+		if rect['regionSize'] < regionSize:
 			continue 
 		cv2.rectangle(img, (rect['regionXL'], rect['regionYU']), (rect['regionXR'], rect['regionYD']), color, 1)
+
 	return img
 
 if __name__ == '__main__':
@@ -215,6 +217,6 @@ if __name__ == '__main__':
 	for name in fileName:
 		img = cv2.imread(filePath+ name)
 		region = selective_search(img, 0.9, 500, 10)
-		img = rect_draw(img, region, color= (0, 0, 255), regionSize= 2000)
-		cv2.imwrite(savePath+ 'SS_'+ name, img)
-		print("TIME : {}".format(time.time()-t))
+		img = rect_draw(img, region, color = (0, 0, 255), regionSize = 2000)
+		cv2.imwrite(savePath + 'SS_' + name, img)
+		print("TIME : {}".format(time.time() - t))
