@@ -21,13 +21,12 @@
 
       In order to measure the similarity in color, this approach can measure color distribution  
       of each region.  
-      Calculate color histogram of each region, than calculate the sum of minimize similarity  
-      in each interval between both neighboring regions.  
+      Calculate color histogram of each region, than sum up the minimize interval between both  
+      neighboring regions.  
 
 <img src="./src/Algorithm/color.jpg" width="500px/">  
 
-      We can easily get the color similarity after merge two region by using following
-      algorithm.
+      We can easily get the color similarity after merge two region by using following algorithm.
 
 <img src="./src/Algorithm/merge.jpg" width="500px/">  
 
@@ -48,7 +47,7 @@
 
    **D. _fill similarity_:**  
 
-      Merge the regions which have the least **_hole_** after merging.
+      Merge the regions which has the least hole after merging.  
   
 <img src="./src/Algorithm/fill.jpg" width="500px/">  
 
